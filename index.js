@@ -35,16 +35,43 @@ async function run() {
 
 
 
-    // get brand products
+    app.get('/products', async (req, res) => {
+      // Handle logic for fetching all products without filtering by brand
+      const allProducts = await productsCollection.find({}).toArray();
+      res.send(allProducts);
+    });
 
-    app.get('/products/:brand', async(req, res) => {
+
+
+// get specific products to see details
+    app.get('/products/:id', async(req, res) => {
+      const id = req.params.id;
+      console.log('product id:', id);
+      const query = {_id : new ObjectId(id)}
+      console.log('Query:', query);
+      const result = await productsCollection.findOne(query);
+      console.log('result:', result);
+      res.send(result);
+    })
+
+
+
+
+    // get brand products for product/brand route
+    app.get('/brands/:brand', async(req, res) => {
       const brand = req.params.brand;
-      console.log('brand name:', brand);
+      // console.log('brand name:', brand);
       const query = {brand_name : brand}
       const products = await productsCollection.find(query).toArray();
-      console.log('products:', products);
+      // console.log('products:', products);
       res.send(products);
     })
+
+   
+
+
+
+    
 
 
 
