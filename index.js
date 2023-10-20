@@ -33,6 +33,7 @@ async function run() {
 
     const productsCollection = client.db('ProductsDB').collection('products');
 
+    const cartCollection = client.db('cartDB').collection('cart');
 
 
     app.get('/products', async (req, res) => {
@@ -40,17 +41,24 @@ async function run() {
       const allProducts = await productsCollection.find({}).toArray();
       res.send(allProducts);
     });
-
-
-
-// get specific products to see details
+    
+    // get to update product
+    app.get('/update/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await productsCollection.findOne(query);
+      res.send(result);
+    })
+    
+    
+    // get specific products to see details
     app.get('/products/:id', async(req, res) => {
       const id = req.params.id;
-      console.log('product id:', id);
-      const query = {_id : new ObjectId(id)}
-      console.log('Query:', query);
+      // console.log('product id:', id);
+      const query = { _id : new ObjectId(id)}
+      // console.log('Query:', query);
       const result = await productsCollection.findOne(query);
-      console.log('result:', result);
+      // console.log('result:', result);
       res.send(result);
     })
 
@@ -67,24 +75,39 @@ async function run() {
       res.send(products);
     })
 
-   
-
-
-
-    
-
 
 
     app.post('/products', async(req, res) => {
         const newProduct = req.body;
-        console.log(newProduct);
+        // console.log(newProduct);
         const result = await productsCollection.insertOne(newProduct);
         res.send(result);
+    })
+    
+    
+    
+    
+    // post cart items
+    app.post('/cart', async(req, res) => {
+     
+      const cartItem = req.body;
+      console.log(cartItem);
+      const result = await cartCollection.insertOne(cartItem);
+      res.send(result);
     })
 
 
 
+    // app.post('/cart', async(req, res) => {
+    //   const details = req.body;
+    //   console.log(details);
+    //   const result = await cartCollection.insertOne(details);
+    //   res.send(result);
+    // })
 
+
+
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
