@@ -75,6 +75,33 @@ async function run() {
       res.send(products);
     })
 
+    
+
+
+    // Get cart items for a specific user
+// app.get('/cart/:email', async (req, res) => {
+//   const userEmail = req.params.email;
+//   try {
+//     // Retrieve cart items for the specific user
+//     const userCartItems = await cartCollection.find({ userEmail }).toArray();
+
+//     res.json(userCartItems);
+//   } catch (error) {
+//     console.error('Error retrieving cart items:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
+
+app.get('/cart/:email', async (req, res) => {
+  const userEmail = req.params.email;
+  const userCartItems = await cartCollection.find({ userEmail }).toArray();
+
+  res.json(userCartItems);
+
+ 
+});
+
 
 
     app.post('/products', async(req, res) => {
@@ -117,6 +144,12 @@ async function run() {
     })
 
 
+    app.delete('/cart/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    })
 
     // app.post('/cart', async(req, res) => {
     //   const details = req.body;
